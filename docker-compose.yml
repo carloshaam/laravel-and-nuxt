@@ -1,0 +1,86 @@
+version: '3.8'
+
+services:
+  laravel:
+    build:
+      context: ./api
+      dockerfile: Dockerfile
+    container_name: laravel-app
+    environment:
+      - APP_ENV=local
+      - APP_DEBUG=true
+      - APP_KEY=base64:ooYpeqsejPzKD86Qb7t6INgbA93orpVsH/4WZSIYkBQ=
+      - DB_HOST=mysql
+      - DB_PORT=3306
+      - DB_DATABASE=laravel
+      - DB_USERNAME=root
+      - DB_PASSWORD=password
+    depends_on:
+      - mysql
+      - redis
+    volumes:
+      - ./api:/var/www/html
+    networks:
+      - app-network
+
+  nginx:
+    image: nginx:latest
+    container_name: nginx
+    ports:
+      - '8080:80'
+    volumes:
+      - ./api:/var/www/html
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - laravel
+    networks:
+      - app-network
+
+  nuxt:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    container_name: nuxt-app
+    environment:
+      - NODE_ENV=development
+    ports:
+      - '3000:3000'
+    volumes:
+      - ./client:/app
+    networks:
+      - app-network
+
+  mysql:
+    image: mysql:8.0
+    container_name: mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: laravel
+    volumes:
+      - mysql_data:/var/lib/mysql
+    ports:
+      - '3306:3306'
+    networks:
+      - app-network
+
+  redis:
+    image: redis:alpine
+    container_name: redis
+    ports:
+      - '6379:6379'
+    networks:
+      - app-network
+
+  mailhog:
+    image: mailhog/mailhog
+    container_name: mailhog
+    ports:
+      - '8025:8025'
+    networks:
+      - app-network
+
+volumes:
+  mysql_data:
+
+networks:
+  app-network:
