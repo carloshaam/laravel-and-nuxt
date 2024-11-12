@@ -5,7 +5,7 @@ services:
     build:
       context: ./api
       dockerfile: Dockerfile
-    container_name: laravel-app
+    container_name: ${COMPOSE_PROJECT_NAME}_laravel_app
     environment:
       - DB_PASSWORD=password
       - DB_DATABASE=laravel
@@ -21,7 +21,7 @@ services:
 
   nginx:
     image: nginx:latest
-    container_name: nginx
+    container_name: ${COMPOSE_PROJECT_NAME}_nginx
     ports:
       - '8080:80'
     volumes:
@@ -36,7 +36,7 @@ services:
     build:
       context: ./client
       dockerfile: Dockerfile
-    container_name: nuxt-app
+    container_name: ${COMPOSE_PROJECT_NAME}_nuxt_app
     env_file:
       - ./client/.env
     ports:
@@ -48,7 +48,7 @@ services:
 
   mysql:
     image: mysql:8.0
-    container_name: mysql
+    container_name: ${COMPOSE_PROJECT_NAME}_mysql
     environment:
       - MYSQL_ROOT_PASSWORD=password
       - MYSQL_DATABASE=laravel
@@ -61,7 +61,7 @@ services:
 
   redis:
     image: redis:alpine
-    container_name: redis
+    container_name: ${COMPOSE_PROJECT_NAME}_redis
     ports:
       - '6379:6379'
     networks:
@@ -69,7 +69,7 @@ services:
 
   mailhog:
     image: mailhog/mailhog
-    container_name: mailhog
+    container_name: ${COMPOSE_PROJECT_NAME}_mailhog
     ports:
       - '1025:1025'
       - '8025:8025'
