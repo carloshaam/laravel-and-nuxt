@@ -15,4 +15,4 @@ COPY . .
 EXPOSE 3000
 
 # Iniciar o servidor de desenvolvimento Nuxt.js
-CMD ["npm", "run", "dev"]
+CMD ["npm", "run", "dev", "--", "-o"]
